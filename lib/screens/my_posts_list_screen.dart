@@ -1,5 +1,7 @@
 import 'package:bazartech/models/product.dart';
+import 'package:bazartech/extensions/theme.dart';
 import 'package:bazartech/state/state.dart';
+import 'package:bazartech/widgets/product_tile.dart';
 import 'package:flutter/material.dart';
 
 class MyPostsListScreen extends StatefulWidget {
@@ -18,6 +20,16 @@ class _MyPostsListScreenState extends State<MyPostsListScreen> {
       .toList();
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      color: context.backgroundColor,
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: ListView.builder(
+        itemCount: _products.length,
+        itemBuilder: (context, index) {
+          Product product = _products[index];
+          return ProductTile(product: product);
+        },
+      ),
+    );
   }
 }
