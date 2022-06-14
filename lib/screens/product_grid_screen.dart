@@ -1,10 +1,12 @@
 import 'package:bazartech/extensions/screen_size.dart';
 import 'package:bazartech/extensions/theme.dart';
 import 'package:bazartech/models/product.dart';
+import 'package:bazartech/state/product_list.dart';
 import 'package:bazartech/state/state.dart';
 import 'package:bazartech/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:provider/provider.dart';
 
 class ProductsGridScreen extends StatefulWidget {
   const ProductsGridScreen({
@@ -16,10 +18,10 @@ class ProductsGridScreen extends StatefulWidget {
 }
 
 class _ProductsGridScreenState extends State<ProductsGridScreen> {
-  final List<Product> _products =
-      MockState().products.where((product) => product.status == 1).toList();
   @override
   Widget build(BuildContext context) {
+    final List<Product> _products =
+        Provider.of<ProductList>(context).allProducts(status: 1);
     return Column(children: [
       GestureDetector(
         child: Container(

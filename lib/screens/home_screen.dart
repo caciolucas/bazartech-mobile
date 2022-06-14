@@ -3,11 +3,13 @@ import 'package:bazartech/models/user.dart';
 import 'package:bazartech/screens/my_posts_list_screen.dart';
 import 'package:bazartech/screens/my_profile_screen.dart';
 import 'package:bazartech/screens/product_grid_screen.dart';
+import 'package:bazartech/state/logged_user.dart';
 import 'package:bazartech/state/state.dart';
 import 'package:bazartech/widgets/expandable_fab.dart';
 import 'package:bazartech/widgets/logo.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -18,7 +20,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _tabIndex = 0;
-  User user = MockState().user;
 
   final List<Widget?> _tabs = [
     const ProductsGridScreen(),
@@ -27,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   @override
   Widget build(BuildContext context) {
+    User user = Provider.of<LoggedUser>(context).user;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
