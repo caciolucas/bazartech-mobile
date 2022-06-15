@@ -1,9 +1,12 @@
 import 'package:bazartech/extensions/theme.dart';
+import 'package:bazartech/state/logged_user.dart';
 import 'package:bazartech/widgets/button.dart';
 import 'package:bazartech/widgets/input.dart';
 import 'package:bazartech/widgets/logo.dart';
+import 'package:bazartech/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:bazartech/extensions/screen_size.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -13,6 +16,32 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final usernameEC = TextEditingController();
+  final passwordEC = TextEditingController();
+
+  void _login(BuildContext context) {
+    UserService().login(usernameEC.text, passwordEC.text).then(
+      (data) {
+        if (data['ok']) {
+          Provider.of<LoggedUser>(context, listen: false).setUser(
+            data['body'],
+          );
+          Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                data['message'],
+                style: TextStyle(color: context.onErrorColor),
+              ),
+              backgroundColor: context.errorColor,
+            ),
+          );
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,15 +56,18 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const Logo(size: 50),
               const SizedBox(height: 50),
-              DefaultInput(label: 'Usuário'),
+              DefaultInput(
+                label: 'Usuário',
+                controller: usernameEC,
+              ),
               const SizedBox(height: 20),
-              DefaultInput(label: 'Senha', obscureText: true),
+              DefaultInput(
+                  label: 'Senha', obscureText: true, controller: passwordEC),
               const SizedBox(height: 20),
               DefaultButton(
                 label: 'Entrar',
                 width: double.infinity,
-                onPressed: () =>
-                    {Navigator.of(context).popAndPushNamed('/home')},
+                onPressed: () => {_login(context)},
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

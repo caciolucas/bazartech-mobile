@@ -3,9 +3,10 @@ import 'package:bazartech/models/user.dart';
 import 'package:bazartech/screens/my_posts_list_screen.dart';
 import 'package:bazartech/screens/my_profile_screen.dart';
 import 'package:bazartech/screens/product_grid_screen.dart';
+import 'package:bazartech/services/products_service.dart';
+import 'package:bazartech/services/user_service.dart';
 import 'package:bazartech/state/logged_user.dart';
-import 'package:bazartech/state/state.dart';
-import 'package:bazartech/widgets/expandable_fab.dart';
+import 'package:bazartech/state/product_list.dart';
 import 'package:bazartech/widgets/logo.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -26,45 +27,74 @@ class _HomeScreenState extends State<HomeScreen> {
     const MyPostsListScreen(),
     const MyProfileScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      fetchProducts(context);
+    });
+  }
+
+  Future<void> fetchUser(BuildContext context) async {
+    final user = await UserService().getCurrentUser();
+    Provider.of<LoggedUser>(context, listen: false)
+        .setUser(User.fromMap(user['body']));
+  }
+
+  Future<void> fetchProducts(BuildContext context) async {
+    ProductService().getProducts().then(
+      (data) {
+        if (data['ok']) {
+          Provider.of<ProductList>(context, listen: false).setProducts(
+            data['body'],
+          );
+        } else {
+          throw Exception(data['message']);
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<LoggedUser>(context).user;
+    User? user = Provider.of<LoggedUser>(context).user;
+    bool showFavorites = Provider.of<ProductList>(context).showFavorites;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: context.backgroundColor,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Logo(),
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Logo(),
+            const Spacer(),
+            _tabIndex == 0
+                ? GestureDetector(
+                    child: Icon(
+                        showFavorites ? Icons.favorite : Icons.favorite_border),
+                    onTap: () {
+                      Provider.of<ProductList>(context, listen: false)
+                          .toggleShowFavorites();
+                    },
+                  )
+                : Container()
           ],
         ),
       ),
-      body: _tabs.elementAt(_tabIndex),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await Future.wait([fetchProducts(context), fetchUser(context)]);
+        },
+        child: _tabs.elementAt(_tabIndex) ?? const SizedBox.shrink(),
+      ),
       floatingActionButton: _tabIndex != 2
-          ? const ExpandableFab(
-              initialOpen: false,
-              distance: 120,
-              children: [
-                ActionButton(
-                  icon: Icon(
-                    FontAwesomeIcons.filter,
-                    color: Colors.white,
-                  ),
-                ),
-                ActionButton(
-                  icon: Icon(
-                    FontAwesomeIcons.search,
-                    color: Colors.white,
-                  ),
-                ),
-                ActionButton(
-                  icon: Icon(
-                    FontAwesomeIcons.plus,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+          ? FloatingActionButton(
+              child: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.pushNamed(context, "/add_product");
+              },
             )
           : null,
       bottomNavigationBar: BottomNavigationBar(

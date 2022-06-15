@@ -1,8 +1,8 @@
 import 'package:bazartech/extensions/screen_size.dart';
 import 'package:bazartech/extensions/theme.dart';
 import 'package:bazartech/models/product.dart';
+import 'package:bazartech/state/logged_user.dart';
 import 'package:bazartech/state/product_list.dart';
-import 'package:bazartech/state/state.dart';
 import 'package:bazartech/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -20,8 +20,12 @@ class ProductsGridScreen extends StatefulWidget {
 class _ProductsGridScreenState extends State<ProductsGridScreen> {
   @override
   Widget build(BuildContext context) {
-    final List<Product> _products =
-        Provider.of<ProductList>(context).allProducts(status: 1);
+    final List<int> userFavorites =
+        Provider.of<LoggedUser>(context).user!.favoriteProducts;
+    bool showFavorite = Provider.of<ProductList>(context).showFavorites;
+    final List<Product> _products = !showFavorite
+        ? Provider.of<ProductList>(context).allProducts(status: 1)
+        : Provider.of<ProductList>(context).getByIdList(userFavorites);
     return Column(children: [
       GestureDetector(
         child: Container(
@@ -46,11 +50,12 @@ class _ProductsGridScreenState extends State<ProductsGridScreen> {
                         arguments: product);
                   },
                   child: ProductCard(
+                    id: product.id,
                     name: product.name,
                     description: product.description,
                     price: product.price,
                     imageURL: product.imagesDisplay[0].image,
-                    tags: product.tagsDisplay,
+                    tags: product.tags,
                   ),
                 );
               },

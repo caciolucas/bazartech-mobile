@@ -16,7 +16,7 @@ class UiConfig {
           onSecondary: Colors.white,
           onSurface: Colors.white,
           onBackground: Colors.white,
-          onError: Color(0xFF0C1618),
+          onError: Colors.white,
           brightness: Brightness.dark,
         ),
       );

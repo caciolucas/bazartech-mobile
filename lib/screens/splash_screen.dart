@@ -1,6 +1,10 @@
 import 'package:bazartech/extensions/theme.dart';
+import 'package:bazartech/models/user.dart';
+import 'package:bazartech/services/user_service.dart';
+import 'package:bazartech/state/logged_user.dart';
 import 'package:bazartech/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -12,11 +16,17 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 1)).then((_) {
-      // TODO: check if already logged in and redirect to home
-      Navigator.popAndPushNamed(context, '/login');
-    });
     super.initState();
+
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
+      User? user = Provider.of<LoggedUser>(context, listen: false).user;
+      bool tokenExpired = await UserService().checkTokenExp();
+      if (user != null) {
+        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+      } else {
+        Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
+      }
+    });
   }
 
   @override
@@ -27,10 +37,9 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: const [
               Logo(
                 size: 50,
-                onPressed: () => {Navigator.popAndPushNamed(context, '/login')},
               )
             ],
           ),

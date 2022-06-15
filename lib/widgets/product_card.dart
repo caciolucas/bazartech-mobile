@@ -1,8 +1,12 @@
 import 'package:bazartech/extensions/theme.dart';
+import 'package:bazartech/services/user_service.dart';
+import 'package:bazartech/state/logged_user.dart';
 import 'package:bazartech/widgets/tag.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProductCard extends StatelessWidget {
+  final int _id;
   final String _name;
   final String _description;
   final double _price;
@@ -11,12 +15,14 @@ class ProductCard extends StatelessWidget {
 
   const ProductCard({
     Key? key,
+    required int id,
     required String name,
     required String description,
     required double price,
     required String imageURL,
     required List<String> tags,
-  })  : _name = name,
+  })  : _id = id,
+        _name = name,
         _tags = tags,
         _price = price,
         _description = description,
@@ -25,6 +31,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var user = Provider.of<LoggedUser>(context).user;
     return Card(
       color: context.primaryColor.withOpacity(0.5),
       shape: RoundedRectangleBorder(
@@ -37,9 +44,32 @@ class ProductCard extends StatelessWidget {
               topLeft: Radius.circular(5),
               topRight: Radius.circular(5),
             ),
-            child: Image.network(
-              'https://ipfs.io/ipfs/$_imageURL',
-              fit: BoxFit.fitWidth,
+            child: Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                Image.network(
+                  _imageURL,
+                  fit: BoxFit.fitWidth,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      Provider.of<LoggedUser>(context, listen: false)
+                          .addOrRemoveFavoriteProduct(_id);
+                      UserService().partialUpdateUser(user?.id ?? 0,
+                          {"favorite_products": user!.favoriteProducts});
+                    },
+                    child: Icon(
+                      user!.favoriteProducts.contains(_id)
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: context.secondaryColor,
+                      size: 35,
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
           Container(

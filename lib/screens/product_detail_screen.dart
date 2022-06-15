@@ -1,9 +1,12 @@
 import 'package:bazartech/extensions/screen_size.dart';
 import 'package:bazartech/extensions/theme.dart';
 import 'package:bazartech/models/product.dart';
+import 'package:bazartech/state/logged_user.dart';
+import 'package:bazartech/widgets/button.dart';
 import 'package:bazartech/widgets/tag.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class ProductDetailScreen extends StatefulWidget {
@@ -44,7 +47,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           width: MediaQuery.of(context).size.width,
                           margin: const EdgeInsets.symmetric(horizontal: 5.0),
                           child: Image.network(
-                            'https://ipfs.io/ipfs/${i.image}',
+                            i.image,
                             height: 200,
                           ),
                         ),
@@ -98,8 +101,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             Wrap(
               runSpacing: 2,
               spacing: 2,
-              children: product.tagsDisplay.map((e) => Tag(e)).toList(),
-            )
+              children: product.tags.map((e) => Tag(e)).toList(),
+            ),
+            const SizedBox(height: 50),
+            product.owner == Provider.of<LoggedUser>(context).user!.id
+                ? DefaultButton(
+                    label: "Editar",
+                    width: double.infinity,
+                    onPressed: () => {})
+                : const SizedBox.shrink(),
           ],
         ),
       ),
