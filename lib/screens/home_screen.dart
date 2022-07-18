@@ -31,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       fetchProducts(context);
     });
@@ -41,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final user = await UserService().getCurrentUser();
     Provider.of<LoggedUser>(context, listen: false)
         .setUser(User.fromMap(user['body']));
+    UserService().registerDevice();
   }
 
   Future<void> fetchProducts(BuildContext context) async {

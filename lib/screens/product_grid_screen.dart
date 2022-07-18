@@ -54,7 +54,9 @@ class _ProductsGridScreenState extends State<ProductsGridScreen> {
                     name: product.name,
                     description: product.description,
                     price: product.price,
-                    imageURL: product.imagesDisplay[0].image,
+                    imageURL: product.imagesDisplay.isNotEmpty
+                        ? product.imagesDisplay[0].image
+                        : "https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg",
                     tags: product.tags,
                   ),
                 );

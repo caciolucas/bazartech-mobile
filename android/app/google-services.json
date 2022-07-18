@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "588240295445",
+    "project_id": "bazartech-8aaed",
+    "storage_bucket": "bazartech-8aaed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:588240295445:android:44f0b2b8d891ca04a4e01c",
+        "android_client_info": {
+          "package_name": "com.example.bazartech"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "588240295445-a571pnos5uhfq9f21vqrku6c04etbadg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsK4C5OQAwI_eOnrHUgwY_bm6e3TmZO3s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "588240295445-a571pnos5uhfq9f21vqrku6c04etbadg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

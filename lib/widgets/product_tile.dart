@@ -42,7 +42,9 @@ class ProductTile extends StatelessWidget {
       color: context.primaryColor.withOpacity(0.5),
       child: ListTile(
         leading: Image.network(
-          product.imagesDisplay.first.image,
+          product.imagesDisplay.isNotEmpty
+              ? product.imagesDisplay.first.image
+              : "https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg",
           width: 100,
           fit: BoxFit.cover,
         ),

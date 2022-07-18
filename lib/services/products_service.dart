@@ -25,9 +25,7 @@ class ProductService {
       return {'body': products, 'ok': true};
     } catch (e) {
       rethrow;
-      return {'message': 'Erro ao tentar fazer login', 'ok': false};
     }
-    return {};
   }
 
   Future<bool> partialUpdateProduct(int id, Map<String, dynamic> data) async {

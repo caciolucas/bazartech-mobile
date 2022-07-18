@@ -6,6 +6,9 @@ import 'package:bazartech/widgets/logo.dart';
 import 'package:bazartech/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:bazartech/extensions/screen_size.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,6 +21,36 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final usernameEC = TextEditingController();
   final passwordEC = TextEditingController();
+  static final _auth = LocalAuthentication();
+
+  static Future<bool> hasBiometrics() async {
+    try {
+      return await _auth.canCheckBiometrics;
+    } on PlatformException {
+      return false;
+    }
+  }
+
+  static Future<List<BiometricType>> getBiometrics() async {
+    try {
+      return await _auth.getAvailableBiometrics();
+    } on PlatformException {
+      return <BiometricType>[];
+    }
+  }
+
+  static Future<bool> authenticate() async {
+    final isAvailable = await hasBiometrics();
+    if (!isAvailable) return false;
+
+    try {
+      return await _auth.authenticate(
+        localizedReason: 'Scan Fingerprint to Authenticate',
+      );
+    } on PlatformException {
+      return false;
+    }
+  }
 
   void _login(BuildContext context) {
     UserService().login(usernameEC.text, passwordEC.text).then(
@@ -26,6 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Provider.of<LoggedUser>(context, listen: false).setUser(
             data['body'],
           );
+          UserService().registerDevice();
           Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -40,6 +74,29 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       },
     );
+  }
+
+  @override
+  void initState() {
+    const FlutterSecureStorage().containsKey(key: 'last_user').then(
+      (value) {
+        if (value) {
+          const FlutterSecureStorage().read(key: 'last_user').then(
+            (value) {
+              usernameEC.text = value ?? "";
+            },
+          );
+        }
+        authenticate().then((value) {
+          const FlutterSecureStorage().read(key: 'last_pass').then(
+            (value) {
+              passwordEC.text = value ?? "";
+            },
+          );
+        });
+      },
+    );
+    super.initState();
   }
 
   @override
@@ -68,6 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 label: 'Entrar',
                 width: double.infinity,
                 onPressed: () => {_login(context)},
+                // onPressed: () => {authenticate()},
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

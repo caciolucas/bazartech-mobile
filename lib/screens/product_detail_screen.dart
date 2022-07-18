@@ -34,35 +34,57 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CarouselSlider(
-              options: CarouselOptions(
-                enableInfiniteScroll: false,
-                height: 300,
-              ),
-              items: product.imagesDisplay.map((i) {
-                return Builder(
-                  builder: (BuildContext context) {
-                    return Column(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                          child: Image.network(
-                            i.image,
-                            height: 200,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          i.description,
-                          maxLines: 5,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }).toList(),
-            ),
+                options: CarouselOptions(
+                  enableInfiniteScroll: false,
+                  height: 300,
+                ),
+                items: product.imagesDisplay.isNotEmpty
+                    ? product.imagesDisplay.map((i) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return Column(
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 5.0),
+                                  child: Image.network(
+                                    i.image,
+                                    height: 200,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  i.description,
+                                  maxLines: 5,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }).toList()
+                    : [
+                        Column(
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              child: Image.network(
+                                "https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg",
+                                height: 200,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            const Text(
+                              "Sem imagens para o produto",
+                              maxLines: 5,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        )
+                      ]),
             const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
