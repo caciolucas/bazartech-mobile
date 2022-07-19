@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       return await _auth.authenticate(
-        localizedReason: 'Scan Fingerprint to Authenticate',
+        localizedReason: 'Use sua digital para recuperar a senha salva',
       );
     } on PlatformException {
       return false;
@@ -88,11 +88,13 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
         authenticate().then((value) {
-          const FlutterSecureStorage().read(key: 'last_pass').then(
-            (value) {
-              passwordEC.text = value ?? "";
-            },
-          );
+          if (value) {
+            const FlutterSecureStorage().read(key: 'last_pass').then(
+              (value) {
+                passwordEC.text = value ?? "";
+              },
+            );
+          }
         });
       },
     );
