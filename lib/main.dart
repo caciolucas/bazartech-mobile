@@ -1,4 +1,5 @@
 import 'package:bazartech/screens/home_screen.dart';
+import 'package:bazartech/screens/product_addition_screen.dart';
 import 'package:bazartech/screens/product_detail_screen.dart';
 import 'package:bazartech/screens/splash_screen.dart';
 import 'package:bazartech/screens/login_screen.dart';
@@ -41,6 +42,8 @@ class Bazartechapp extends StatelessWidget {
             "/home": (BuildContext context) => const HomeScreen(),
             "/product-detail": (BuildContext context) =>
                 const ProductDetailScreen(),
+            "/add-product": (BuildContext context) =>
+                const ProductAdditionScreen(),
           },
         ),
       ),

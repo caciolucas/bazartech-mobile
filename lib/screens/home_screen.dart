@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ? FloatingActionButton(
               child: const Icon(Icons.add),
               onPressed: () {
-                Navigator.pushNamed(context, "/add_product");
+                Navigator.pushNamed(context, "/add-product");
               },
             )
           : null,
